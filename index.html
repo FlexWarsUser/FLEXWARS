@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Flex Wars 👑</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+  :root {
+    --yellow: #f9d71c;
+    --dark: #121212;
+    --white: #e0e0e0;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #3a3f44 0%, #22272c 70%);
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(60deg, #444a50 0%, #2a2e32 25%, #50575e 50%, #2a2e32 75%, #444a50 100%);
+    background-size: 200% 200%;
+    animation: shine 8s linear infinite;
+    mix-blend-mode: overlay;
+    opacity: 0.4;
+    z-index: -1;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' fill='none'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    z-index: -1;
+  }
+
+  @keyframes shine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--yellow);
+    text-shadow: 0 0 8px var(--yellow);
+    margin-bottom: 0.5rem;
+  }
+
+  .subtext {
+    margin-bottom: 1rem;
+    text-align: center;
+    max-width: 700px;
+    font-size: 1rem;
+    background: #1f1f1f;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #f9d71c44;
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 700px;
+    width: 100%;
+    background: #1f1f1f;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--yellow);
+    margin-bottom: 1rem;
+  }
+
+  form input, form textarea {
+    background: #2b2b2b;
+    color: var(--white);
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    flex: 1 1 150px;
+  }
+
+  form button {
+    background: var(--yellow);
+    color: var(--dark);
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--yellow);
+  }
+
+  #error {
+    color: #ff6666;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    max-width: 700px;
+  }
+
+  table {
+    width: 100%;
+    max-width: 700px;
+    border-collapse: collapse;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px #f9d71caa;
+  }
+
+  thead {
+    background: #2a2a2a;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 10px;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    color: var(--white);
+    border-bottom: 1px solid #333;
+    transition: transform 0.5s ease;
+    position: relative;
+  }
+
+  tbody tr.first-place {
+    background: var(--yellow);
+    color: #000;
+    font-weight: 700;
+  }
+
+  tbody tr.second-place, tbody tr.third-place {
+    color: var(--yellow);
+    font-weight: 700;
+  }
+
+  .flash {
+    animation: flash 1.2s ease-in-out infinite;
+  }
+
+  @keyframes flash {
+    0% { background-color: #f9d71c; }
+    50% { background-color: #ffe657; }
+    100% { background-color: #f9d71c; }
+  }
+
+  .amount-flash {
+    animation: amountFlash 1s ease-in-out 3; /* 3 cycles of 1s each = 3s total */
+  }
+
+  @keyframes amountFlash {
+    0% { background-color: #f9d71c; color: #000; }
+    50% { background-color: #ffe657; color: #000; }
+    100% { background-color: transparent; color: inherit; }
+  }
+
+  .name {
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 4px;
+  }
+
+  .taunt-button {
+    background: crimson;
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .taunt-box {
+    display: none;
+    position: absolute;
+    background: #1a1a1a;
+    border: 1px solid #444;
+    padding: 6px;
+    border-radius: 6px;
+    z-index: 10;
+  }
+
+  .bio {
+    font-style: italic;
+    background: #fff8c1;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  .top-up-button {
+    background: var(--yellow);
+    color: var(--dark);
+    font-weight: 700;
+    border: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+  }
+
+  .top-up-button:hover {
+    background: #ffe657;
+  }
+
+  .name-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Flex Wars 👑</h1>
+<div class="subtext">
+  Simp your favourite OnlyFans star. Pimp your favourite creator. Or just flex your cash to dominate the leaderboard.
+</div>
+
+<form id="bidForm">
+  <input type="text" id="bidderName" placeholder="Your Name" required />
+  <input type="number" id="bidAmount" placeholder="Your Bid 💸" step="0.01" required />
+  <input type="text" id="bidderLink" placeholder="Your Link (OnlyFans, Instagram, Patreon, etc.)" />
+  <textarea id="bidderBio" placeholder="Optional: Message for top spot only"></textarea>
+  <button type="submit">Flex 💥</button>
+</form>
+
+<div id="error"></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Flexer</th>
+      <th>Bid 💰</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="leaderboardBody"></tbody>
+</table>
+
+<div id="tauntDropdown" class="taunt-box">
+  <select id="tauntSelect">
+    <option value="">Choose a brutal taunt</option>
+    <option value="You flex like a broke NPC.">You flex like a broke NPC.</option>
+    <option value="Did your credit card decline mid-bid?">Did your credit card decline mid-bid?</option>
+    <option value="You're not even in my league.">You're not even in my league.</option>
+    <option value="That bid belongs in the trash.">That bid belongs in the trash.</option>
+    <option value="Big flex for someone with tiny numbers.">Big flex for someone with tiny numbers.</option>
+    <option value="Your wallet's crying harder than you.">Your wallet's crying harder than you.</option>
+    <option value="Flexing? More like stressing your finances.">Flexing? More like stressing your finances.</option>
+  </select>
+</div>
+
+<script>
+// Helper to normalize the link for favicon fetching and validation
+function normalizeUrl(input) {
+  try {
+    let url = input.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
+    const parsedUrl = new URL(url);
+    return parsedUrl.toString().replace(/\/+$/, '');
+  } catch {
+    return null;
+  }
+}
+
+// Helper to get favicon from a URL
+function getFavicon(link) {
+  if (!link) {
+    return 'https://api.dicebear.com/7.x/bottts/svg?seed=Flexer';
+  }
+  const normalized = normalizeUrl(link);
+  if (!normalized) {
+    return 'https://api.dicebear.com/7.x/bottts/svg?seed=Flexer';
+  }
+  try {
+    const url = new URL(normalized);
+    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`;
+  } catch {
+    return 'https://api.dicebear.com/7.x/bottts/svg?seed=Flexer';
+  }
+}
+
+function randomDecimal(min, max) {
+  return +(Math.random() * (max - min) + min).toFixed(2);
+}
+
+let leaderboard = [
+  {
+    name: "ChatGPT Bet",
+    amount: 70, // Fixed to ensure initial leader
+    link: "https://www.instagram.com/the_chat_gpt_bet",
+    bio: "AI flexing on humans.",
+    avatar: ""
+  },
+  {
+    name: "Marco",
+    amount: randomDecimal(45, 65),
+    link: "https://patreon.com/marcobets",
+    bio: "Pimping my Patreon fam.",
+    avatar: ""
+  },
+  {
+    name: "FlexQueen",
+    amount: randomDecimal(25, 45),
+    link: "https://onlyfans.com/flexqueen",
+    bio: "Simping done right.",
+    avatar: ""
+  },
+  {
+    name: "MoneyMike",
+    amount: randomDecimal(20, 40),
+    link: "https://onlyfans.com/moneymike",
+    bio: "",
+    avatar: ""
+  },
+  {
+    name: "RichieRich",
+    amount: randomDecimal(15, 35),
+    link: "https://onlyfans.com/richierich",
+    bio: "",
+    avatar: ""
+  },
+  {
+    name: "BallerBetty",
+    amount: randomDecimal(10, 30),
+    link: "https://onlyfans.com/ballerbetty",
+    bio: "",
+    avatar: ""
+  },
+  {
+    name: "SlickRick",
+    amount: randomDecimal(5, 25),
+    link: "https://onlyfans.com/slickrick",
+    bio: "",
+    avatar: ""
+  },
+  {
+    name: "CashCarter",
+    amount: randomDecimal(3, 20),
+    link: "https://onlyfans.com/cashcarter",
+    bio: "",
+    avatar: ""
+  },
+  {
+    name: "BigBetBrenda",
+    amount: randomDecimal(1, 15),
+    link: "https://onlyfans.com/bigbetbrenda",
+    bio: "",
+    avatar: ""
+  },
+  {
+    name: "SmoothSteve",
+    amount: randomDecimal(1, 10),
+    link: "https://onlyfans.com/smoothsteve",
+    bio: "",
+    avatar: ""
+  }
+];
+
+leaderboard.forEach(p => {
+  p.avatar = getFavicon(p.link);
+});
+
+let flashIndex = -1;
+let animationInterval = null;
+let rowHeight = 60; // Approximate row height in pixels, adjust based on CSS
+
+function sortLeaderboard() {
+  return [...leaderboard].sort((a, b) => b.amount - a.amount);
+}
+
+function renderLeaderboard(displayLeaderboard, flashIndices = []) {
+  const tbody = document.getElementById('leaderboardBody');
+  const previousPositions = {};
+
+  // Store current positions of existing rows
+  Array.from(tbody.children).forEach((tr, i) => {
+    const name = tr.querySelector('.name').textContent.trim();
+    previousPositions[name] = i;
+  });
+
+  // Clear tbody to prepare for new render
+  tbody.innerHTML = '';
+
+  displayLeaderboard.forEach((entry, i) => {
+    const tr = document.createElement('tr');
+
+    if (i === 0) tr.classList.add('first-place');
+    else if (i === 1) tr.classList.add('second-place');
+    else if (i === 2) tr.classList.add('third-place');
+
+    const displayLink = entry.link ? normalizeUrl(entry.link) || entry.link : '#';
+    const amountCellClass = flashIndices.includes(i) ? 'amount-flash' : '';
+
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td>
+        <span class="name-container">
+          <button class="top-up-button" data-name="${entry.name}">↑</button>
+          <a href="${displayLink}" target="_blank" class="name" rel="noopener noreferrer" style="display:flex; align-items:center;">
+            <img src="${entry.avatar}" alt="${entry.name} avatar" class="avatar" />
+            ${entry.name}
+          </a>
+        </span>
+        ${i === 0 && entry.bio ? `<div class="bio">${entry.bio}</div>` : ''}
+      </td>
+      <td class="${amountCellClass}">$${entry.amount.toFixed(2)}</td>
+      <td><button class="taunt-button" data-index="${i}">Taunt</button></td>
+    `;
+
+    tbody.appendChild(tr);
+
+    // Animate position change
+    const previousIndex = previousPositions[entry.name] !== undefined ? previousPositions[entry.name] : displayLeaderboard.length - 1;
+    const delta = previousIndex - i;
+    if (delta !== 0) {
+      tr.style.transform = `translateY(${delta * rowHeight}px)`;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          tr.style.transform = 'translateY(0)';
+        });
+      });
+    }
+  });
+
+  // Update row height dynamically
+  const firstRow = tbody.querySelector('tr');
+  if (firstRow) {
+    rowHeight = firstRow.offsetHeight;
+  }
+
+  setupTauntButtons();
+  setupTopUpButtons();
+}
+
+function setupTauntButtons() {
+  const buttons = document.querySelectorAll('.taunt-button');
+  buttons.forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const idx = +btn.getAttribute('data-index');
+      const tauntBox = document.getElementById('tauntDropdown');
+      const tauntSelect = document.getElementById('tauntSelect');
+      tauntSelect.value = '';
+
+      const rect = btn.getBoundingClientRect();
+      tauntBox.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+      tauntBox.style.left = (rect.left + window.scrollX) + 'px';
+      tauntBox.style.display = 'block';
+
+      tauntSelect.onchange = () => {
+        if (tauntSelect.value) {
+          alert(`Taunt for ${leaderboard[idx].name}: "${tauntSelect.value}"`);
+          tauntBox.style.display = 'none';
+        }
+      };
+    };
+  });
+
+  document.addEventListener('click', (e) => {
+    const tauntBox = document.getElementById('tauntDropdown');
+    if (!tauntBox.contains(e.target)) {
+      tauntBox.style.display = 'none';
+    }
+  });
+}
+
+function setupTopUpButtons() {
+  const buttons = document.querySelectorAll('.top-up-button');
+  buttons.forEach(btn => {
+    btn.onclick = () => {
+      const name = btn.getAttribute('data-name');
+      document.getElementById('bidderName').value = name;
+      document.getElementById('bidAmount').focus();
+    };
+  });
+}
+
+function animateBidUpdate(entry, currentIndex) {
+  if (animationInterval) {
+    clearInterval(animationInterval);
+  }
+
+  leaderboard[currentIndex] = entry;
+  const sortedLeaderboard = sortLeaderboard().slice(0, 10);
+  leaderboard = sortedLeaderboard;
+
+  const newIndex = sortedLeaderboard.findIndex(e => e.name.toLowerCase() === entry.name.toLowerCase());
+
+  renderLeaderboard(sortedLeaderboard, [newIndex]);
+  setTimeout(() => {
+    renderLeaderboard(sortedLeaderboard, []);
+    animationInterval = null;
+  }, 3000);
+}
+
+function animateNewBid(newEntry, finalIndex) {
+  if (animationInterval) {
+    clearInterval(animationInterval);
+  }
+
+  leaderboard.push(newEntry);
+  let currentDisplay = [...leaderboard];
+  let currentPos = leaderboard.length - 1;
+
+  renderLeaderboard(currentDisplay, [currentPos]);
+
+  animationInterval = setInterval(() => {
+    if (currentPos <= finalIndex) {
+      clearInterval(animationInterval);
+      const sortedLeaderboard = sortLeaderboard();
+      renderLeaderboard(sortedLeaderboard, [finalIndex]);
+      setTimeout(() => {
+        leaderboard = sortedLeaderboard.slice(0, 10);
+        renderLeaderboard(leaderboard, []);
+        animationInterval = null;
+      }, 10000);
+      return;
+    }
+
+    currentPos--;
+    [currentDisplay[currentPos], currentDisplay[currentPos + 1]] = [currentDisplay[currentPos + 1], currentDisplay[currentPos]];
+    renderLeaderboard(currentDisplay, [currentPos]);
+  }, 1000); // 1 second for twice as fast animation
+}
+
+document.getElementById('bidForm').onsubmit = (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('bidderName').value.trim();
+  const amountRaw = document.getElementById('bidAmount').value.trim();
+  const link = document.getElementById('bidderLink').value.trim();
+  const bio = document.getElementById('bidderBio').value.trim();
+
+  const errorDiv = document.getElementById('error');
+  errorDiv.textContent = '';
+
+  if (!name) {
+    errorDiv.textContent = 'Name is required.';
+    return;
+  }
+
+  const amount = parseFloat(amountRaw);
+  if (isNaN(amount) || amount <= 0) {
+    errorDiv.textContent = 'Please enter a valid bid amount greater than 0.';
+    return;
+  }
+
+  let normalizedLink = '';
+  if (link) {
+    normalizedLink = normalizeUrl(link);
+    if (!normalizedLink) {
+      errorDiv.textContent = 'Please enter a valid link (e.g., example.com, www.example.com, or https://example.com) or leave blank.';
+      return;
+    }
+  }
+
+  const existingIndex = leaderboard.findIndex(entry => entry.name.toLowerCase() === name.toLowerCase());
+  let newTotalAmount = amount;
+
+  if (existingIndex !== -1) {
+    newTotalAmount = leaderboard[existingIndex].amount + amount;
+  }
+
+  const sorted = sortLeaderboard();
+  if (sorted.length >= 10) {
+    const lowest = sorted[sorted.length - 1].amount;
+    if (newTotalAmount <= lowest) {
+      errorDiv.textContent = `Your total bid must be greater than the lowest top 10 bid: $${lowest.toFixed(2)}`;
+      return;
+    }
+  }
+
+  let avatarUrl = normalizedLink ? getFavicon(normalizedLink) : 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(name);
+
+  if (existingIndex !== -1) {
+    const existingEntry = leaderboard[existingIndex];
+    existingEntry.amount = newTotalAmount;
+    if (normalizedLink) existingEntry.link = normalizedLink;
+    if (bio) existingEntry.bio = bio;
+    if (normalizedLink) existingEntry.avatar = avatarUrl;
+
+    animateBidUpdate(existingEntry, existingIndex);
+  } else {
+    const newEntry = {
+      name,
+      amount: newTotalAmount,
+      link: normalizedLink,
+      bio,
+      avatar: avatarUrl
+    };
+
+    const finalIndex = sorted.findIndex(entry => entry.amount < newTotalAmount);
+    animateNewBid(newEntry, finalIndex === -1 ? sorted.length : finalIndex);
+  }
+
+  e.target.reset();
+};
+
+sortLeaderboard();
+renderLeaderboard(sortLeaderboard());
+
+setInterval(() => {
+  let changed = false;
+  leaderboard.forEach(entry => {
+    if (entry.amount > 0) {
+      entry.amount = Math.max(0, entry.amount - 0.01);
+      changed = true;
+    }
+  });
+  if (changed) {
+    const sortedLeaderboard = sortLeaderboard().slice(0, 10);
+    leaderboard = sortedLeaderboard;
+    renderLeaderboard(leaderboard, []);
+  }
+}, 30000);
+</script>
+
+</body>
+</html>
